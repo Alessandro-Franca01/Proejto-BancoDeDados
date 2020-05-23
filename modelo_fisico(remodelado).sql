@@ -175,39 +175,44 @@ CREATE TABLE dbo.frete(
 -- FEITA TODAS AS TABELAS (DE ACORDO COM O MODELO LÓGICO)
 
 -- AJUSTAR TODOS OS INSERTS, SEGUNDO A REMODELAGEM!!!
-
 -- INSERINDO ENDEREÇOS (INSERIDO)
-INSERT INTO endereco VALUES ('PB','cabedelo', '58310015', 'Centro', 'Campina da Vila', 185, null)
-INSERT INTO endereco VALUES ('SP','sao paulo', '78400208', 'Centro', 'Rua nova', 105, 'apt')
-INSERT INTO endereco VALUES ('RJ','niteroi', '34200208', 'Centro', 'duque de sa', 10, 'apt')
+-- UNIDO COM CLIENTES:
+INSERT INTO endereco VALUES ('PB','cabedelo', '58310015', 'Centro', 'Campina da Vila', 185, null) --ok
+INSERT INTO endereco VALUES ('SP','sao paulo', '78400208', 'Centro', 'Rua nova', 105, 'apt') -- ok
+INSERT INTO endereco VALUES ('RJ','niteroi', '34200208', 'Centro', 'duque de sa', 10, 'apt') -- ok
 INSERT INTO endereco VALUES ('PB', 'Joao Pessoa', '20190420', 'bairro dos est','Parana', 123, 'residencia')
-INSERT INTO endereco VALUES ('PB', 'cabedelo', '20190310', 'Intermares','Rua Niel Castro', 12, 'apt')
-INSERT INTO endereco VALUES ('PB', 'Joao Pessoa', '20898326', 'Centro','Rua Pedro Alves', 103, NULL)
-INSERT INTO endereco VALUES ('RB','Campina Grande','31097835','Centro', 'Av. Palmeiras',421,'apt')
+INSERT INTO endereco VALUES ('PB', 'cabedelo', '20190310', 'Intermares','Rua Niel Castro', 12, 'apt') -- ok
+INSERT INTO endereco VALUES ('PB', 'Joao Pessoa', '20898326', 'Centro','Rua Pedro Alves', 103, NULL) -- ok
+INSERT INTO endereco VALUES ('PB','Campina Grande','31097835','Centro', 'Av. Palmeiras',421,'apt') -- ok
+INSERT INTO endereco VALUES ('PB','Joao Pessoa','20180322','Ipes','R. Candido',NULL,'predio')
 
-
+-- Ajeitando uns registros
+UPDATE endereco SET estado = 'PB' WHERE estado ='RB'
 
 -- INSERNIDO CLIENTES FISICOS  (INSERIDO)
 INSERT INTO cliente_fisico VALUES ('M','123456789','12345678912') -- ok
 INSERT INTO cliente_fisico VALUES ('F','123421423','123531223498') -- ok
-INSERT INTO cliente_fisico VALUES ('M','123444512','12334509834')
+INSERT INTO cliente_fisico VALUES ('M','123444512','12334509834') -- ok
 INSERT INTO cliente_fisico VALUES ('F','123786312','12365489084') -- ok
-INSERT INTO cliente_fisico VALUES ('M','082937143','82789347383')
+INSERT INTO cliente_fisico VALUES ('M','082937143','82789347383') -- ok
 
 
 -- INSERNIDO CLIENTES JURIDICOS (INSERIDO)
 INSERT INTO cliente_juridico VALUES ('12345678921', 'restaurante popular', 'ativo','alimentacao', null) --ok
-INSERT INTO cliente_juridico VALUES ('12456409809', 'auto peças Carlos', 'Ativo', 'mequanica automoveis', null)
+INSERT INTO cliente_juridico VALUES ('12456409809', 'auto peças Carlos', 'Ativo', 'mequanica automoveis', null) --ok
 INSERT INTO cliente_juridico VALUES ('10938374913', 'prefeitura Joao Pessoa', 'ativo','governamental', null) -- ok
-INSERT INTO cliente_juridico VALUES ('32450987590', 'Hotel Passe Bem', 'inativo','hospedagem', null)
+INSERT INTO cliente_juridico VALUES ('32450987590', 'Hotel Passe Bem', 'inativo','hospedagem', null) -- ok
 
--- INSERNIDO CLIENTES (Esses registros que tem FKs tem que dá uma revisada) Proguesso: 5/9 clientes
+-- INSERNIDO CLIENTES (Esses registros que tem FKs tem que dá uma revisada) Proguesso: 9/9 clientes
 INSERT INTO cliente VALUES ('Darcilene Xavier','Darci@hotmail.com','839872653',6,2,NULL)
 INSERT INTO cliente VALUES ('Sandrinho', 'sandro@gmail.com', '839822114435', 1, 1, null)
-INSERT INTO cliente VALUES ('Oficina do Carlos', 'carlos@hotmail.com', '12344598700',3, null, 23) -- erro
+INSERT INTO cliente VALUES ('Oficina do Carlos', 'carlos@hotmail.com', '12344598700',3, null, 23)
 INSERT INTO cliente VALUES ('Prefeitura João Pessoa','sec_pb@gov.com','8331240965',4,NULL,20)
 INSERT INTO cliente VALUES ('Restaurante Popular','rest_pop@hotmail.com','83934902311',7, NULL,22)
 INSERT INTO cliente VALUES ('Camila Silva','cami_21@hotmail.com','83986538540',9,5,NULL)
+INSERT INTO cliente VALUES ('Roberto Martins','robert_@hotmail.com','34980124365',2,3,NULL)
+INSERT INTO cliente VALUES ('Marcio Alves','marcio15@gmail.com','83987123580',7,6,NULL)
+INSERT INTO cliente VALUES ('Hotel Passe Bem','passebem@hotmail.com','83981732441',11,NULL,21)
 
 SELECT * FROM cliente_fisico
 SELECT * FROM cliente_juridico
@@ -217,14 +222,14 @@ SELECT * FROM cliente
 -- Arrumando a casa (Da uma olhada como altera o registro 'Update/Delete/Alter')
 DELETE cliente WHERE IDCliente = 3 -- Funcionou!!!
 
--- INSERINDO Departamento  (INSERIDO)
+-- INSERINDO Departamento  (INSERIDO) 
 INSERT INTO departamento VALUES ('TIF','INSFRAESTRUTURA', 'TI na area de infraestrutura ')
 INSERT INTO departamento VALUES ('TID', 'DESENVOLIMENTO', 'TI na area de desenvolvimento')
 INSERT INTO departamento VALUES ('VED', 'VENDAS', 'Departamento de vendas')
 INSERT INTO departamento VALUES ('C&L', 'Compras', 'Compras e Logistica')
 --INSERT INTO departamento VALUES ('VED', 'VENDAS', 'Departamento de vendas')  -- Depois faço esse registro!!
 
--- INSERINDO Funcionario (INSERIDO)
+-- INSERINDO Funcionario (INSERIDO) * Inserir os registros de endereços dos funcionarios
 INSERT INTO funcionario VALUES ('Alessandro', 'alessandro@gmail.com','83981423980','M','123445566','12344455512',
                                 NULL,NULL,'Programdor', 'Desenvolvimento de Software','TID')
 INSERT INTO funcionario VALUES ('Marcos', 'marcos@yahoo.com', '83912344321','M','124345678','1243256711',0.50,0.10,
@@ -233,6 +238,8 @@ INSERT INTO funcionario VALUES ('Leandro', 'leandro007@yahoo.com', '83912312561'
                                 NULL,NULL,'C&L')
 INSERT INTO funcionario VALUES ('Jefferson', 'Jeff@gmail.com', '83988901402','M','236890478','1436706711',0.60,0.30,
                                 NULL,NULL,'VED')
+
+
 -- INSERINDO Pedidos (Tabela) #Falta completar o pedido!!
 INSERT INTO pedido VALUES ('13-05-2020','20-05-2020','online',300.00,'Pronto p/ enviar',1,10)
 
