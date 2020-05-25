@@ -388,9 +388,6 @@ INSERT INTO endereco_funcionario VALUES (3,14)
 INSERT INTO endereco_funcionario VALUES (6,15)
 INSERT INTO endereco_funcionario VALUES (9,16)
 
--- INSERINDO Pedidos * Pulando por enquanto...
-INSERT INTO pedido VALUES ('13-05-2020','20-05-2020','online',300.00,'Pronto p/ enviar',1,10)
-
 -- INSERINDO Departamentos de Produtos (INSERIDOS)
 INSERT INTO dept_produto VALUES ('GAM','Games','Jogos e acessorios')
 INSERT INTO dept_produto VALUES ('ESC','OFFICE','acessorios de escritorio')
@@ -413,7 +410,22 @@ INSERT INTO produto VALUES ('Servidor M37', 'Servidor p/ Internet', 'Multilaser'
 INSERT INTO produto VALUES ('Moto G8', 'SmartPhone','Motorola',1200,15,'CEL')
 
 -- INSERINDO Produto_Fornecedor (N:N)
+-- Falta fazer inserir nessa tabela
 
+-- INSERINDO Pedidos (INSERIDO)
+INSERT INTO pedido VALUES ('13-05-2020','20-05-2020','online',3200.00,2,NULL,'entregue') -- PS4
+INSERT INTO pedido VALUES ('20-05-2020', '26-05-2020','presencial',129.80,1,3,'enviado') -- Mouse x2
+INSERT INTO pedido VALUES ('24-05-2020', '02-06-2020', 'online',3659.00,7,NULL,'para enviar')  -- Cell + Note
+
+-- INSERINDO Frete (INSERIDO)
+INSERT INTO frete VALUES ('15-05-2020','19-05-2020',56.90,4,12)
+INSERT INTO frete VALUES ('20-05-2020','25-05-2020',43.50,4,13)
+INSERT INTO frete VALUES ('25-05-2020','01-06-2020',80.50,3,14)
+
+DELETE frete WHERE valor = 56.90
+
+-- ALTERANDO TABELA frete
+ALTER TABLE frete DROP COLUMN distancia
 
 -- CONSULTANDO TABELAS
 SELECT * FROM endereco
@@ -445,3 +457,4 @@ INNER JOIN fornecedor f on pf.ID_Fornecedor = f.IDFornecedor
 SELECT f.nome, f.cpf, f.email, f.sexo, e.estado, e.cidade, e.rua, e.tipo
 FROM funcionario f INNER JOIN endereco_funcionario ef ON F.IDFuncionario = ef.ID_Funcionario
 INNER JOIN endereco e ON E.IDEnderco = ef.ID_Endereco_FC
+
