@@ -32,6 +32,11 @@ CREATE TABLE dbo.cliente_fisico(
 	rg VARCHAR(12) NOT NULL UNIQUE,
 	cpf VARCHAR(15) NOT NULL UNIQUE,
 )
+-- Alteração: Cria columa com a data de nascimento  => OK
+ALTER TABLE cliente_fisico
+ADD data_nasc DATE
+
+SELECT * FROM cliente_fisico
 
 CREATE TABLE dbo.cliente_juridico(
 	IDCliente_juridico TINYINT PRIMARY KEY IDENTITY(20,1),
@@ -41,13 +46,14 @@ CREATE TABLE dbo.cliente_juridico(
 	ramo VARCHAR(50),
 	descricao VARCHAR(40)
  )
+ -- Alteração: Cria columa com a data de abertura  => OK
+ALTER TABLE cliente_juridico ADD data_abertura DATE
 
 CREATE TABLE dbo.cliente(
   	IDCliente TINYINT PRIMARY KEY IDENTITY,
   	nome VARCHAR(40) NOT NULL,
   	email VARCHAR(20),
 	telefone VARCHAR(12),
-	-- Aqui ainda tem tres foreign keys
 	ID_Endereco TINYINT,
 	CONSTRAINT FK_idEndereco FOREIGN KEY (ID_Endereco) REFERENCES  endereco  (IDEnderco),
 	ID_PF TINYINT,
@@ -56,7 +62,7 @@ CREATE TABLE dbo.cliente(
 	CONSTRAINT FK_idPJ FOREIGN KEY (ID_PJ) REFERENCES cliente_juridico (IDCliente_juridico)
 	)
 
-CREATE TABLE dbo.endereco_cliente( --NEW TESTE 21/05/2020 "FUNCIONOU!!!"
+CREATE TABLE dbo.endereco_cliente( -- EXCLUIR ESSA TABELA DEPOIS, NAO ESTA SENDO USADA!!
     ID_Cliente TINYINT NOT NULL,
     ID_Endereco TINYINT NOT NULL,
     CONSTRAINT PK_idCliente_END PRIMARY KEY (ID_Cliente,ID_Endereco),
@@ -64,14 +70,13 @@ CREATE TABLE dbo.endereco_cliente( --NEW TESTE 21/05/2020 "FUNCIONOU!!!"
     CONSTRAINT FK_idEndereco_Cl FOREIGN KEY (ID_Endereco) REFERENCES dbo.endereco (IDEnderco)
 )
 
-
 CREATE TABLE dbo.departamento(
 	IDDepartamento CHAR(3) PRIMARY KEY,
 	nome VARCHAR(15) NOT NULL,
 	descricao VARCHAR(30)
 )
 
-CREATE TABLE dbo.funcionario(
+CREATE TABLE dbo.funcionario( -- ADD nova coluna data_abertura
 	IDFuncionario TINYINT PRIMARY KEY IDENTITY,
 	nome VARCHAR(40) NOT NULL,
   	email VARCHAR(20),
@@ -88,6 +93,11 @@ CREATE TABLE dbo.funcionario(
 	ID_Departamento CHAR(3) NOT NULL,
 	CONSTRAINT FK_idDepartamento FOREIGN KEY (ID_Departamento) REFERENCES dbo.departamento (IDDepartamento),
 )
+-- Alterando a tabela funcionario: Incluindo a coluna SALARIO
+ALTER TABLE funcionario
+    ADD salario MONEY
+-- Alteração: Cria columa com a data de nascimento  => ok
+ALTER TABLE funcionario ADD data_nasc DATE
 
 CREATE TABLE dbo.endereco_funcionario(
     ID_Funcionario TINYINT NOT NULL,
@@ -109,8 +119,6 @@ CREATE TABLE dbo.pedido(
 	ID_Vendedor TINYINT, -- PODE RECEBER VALOR NULL
 	CONSTRAINT FK_idVendedor FOREIGN KEY (ID_Vendedor) REFERENCES dbo.funcionario (IDFuncionario)
 )
--- Alterando a tabela pedido coluna 'ESTADO' para CHECK
---ALTER TABLE pedido ADD estado VARCHAR(30) CHECK (estado IN('enviado','entregue','para enviar')),
 
 CREATE TABLE dbo.pagamento(
     IDPagamento TINYINT PRIMARY KEY IDENTITY(30,1),
@@ -211,12 +219,29 @@ INSERT INTO cliente_fisico VALUES ('M','123444512','12334509834') -- ok
 INSERT INTO cliente_fisico VALUES ('F','123786312','12365489084') -- ok
 INSERT INTO cliente_fisico VALUES ('M','082937143','82789347383') -- ok
 
+-- ADD a data de nascimento:
+SELECT cf.IDCliente_fisico AS ID_ClienteF, c.nome, c.email, c.telefone, cf.rg, cf.sexo, cf.cpf, e.estado, e.cidade ,e.bairro FROM cliente c
+INNER JOIN cliente_fisico cf on c.ID_PF = cf.IDCliente_fisico INNER JOIN endereco e ON c.ID_Endereco = e.IDEnderco
+SELECT * FROM cliente_fisico
+-- UPDATEs: FEITOS!!
+UPDATE cliente_fisico SET data_nasc = '20-05-1979' WHERE IDCliente_fisico = 1
+UPDATE cliente_fisico SET data_nasc = '12-03-1989' WHERE IDCliente_fisico = 2
+UPDATE cliente_fisico SET data_nasc = '09-09-1992' WHERE IDCliente_fisico = 5
+UPDATE cliente_fisico SET data_nasc = '24-05-1980' WHERE IDCliente_fisico = 3
+UPDATE cliente_fisico SET data_nasc = '13-01-1966' WHERE IDCliente_fisico = 6
+
 
 -- INSERNIDO CLIENTES JURIDICOS (INSERIDO)
 INSERT INTO cliente_juridico VALUES ('12345678921', 'restaurante popular', 'ativo','alimentacao', null) --ok
 INSERT INTO cliente_juridico VALUES ('12456409809', 'auto peças Carlos', 'Ativo', 'mequanica automoveis', null) --ok
 INSERT INTO cliente_juridico VALUES ('10938374913', 'prefeitura Joao Pessoa', 'ativo','governamental', null) -- ok
 INSERT INTO cliente_juridico VALUES ('32450987590', 'Hotel Passe Bem', 'inativo','hospedagem', null) -- ok
+
+-- UPDATEs: FEITOS!!
+UPDATE cliente_juridico SET data_abertura = '20-05-1869' WHERE IDCliente_juridico = 20
+UPDATE cliente_juridico SET data_abertura = '23-01-1959' WHERE IDCliente_juridico = 21
+UPDATE cliente_juridico SET data_abertura = '21-12-2009' WHERE IDCliente_juridico = 22
+UPDATE cliente_juridico SET data_abertura = '14-08-2017' WHERE IDCliente_juridico = 23
 
 -- INSERNIDO CLIENTES
 INSERT INTO cliente VALUES ('Darcilene Xavier','Darci@hotmail.com','839872653',6,2,NULL)
@@ -242,15 +267,29 @@ INSERT INTO departamento VALUES ('BIG','BIG DATA','Engenharia de dados')
 
 -- INSERINDO Funcionario (INSERIDO)
 INSERT INTO funcionario VALUES ('Alessandro', 'alessandro@gmail.com','83981423980','M','123445566','12344455512',
-                                NULL,NULL,'Programdor', 'Desenvolvimento de Software','TID') -- OK
+                                NULL,NULL,'Programdor', 'Desenvolvimento de Software','TID')
 INSERT INTO funcionario VALUES ('Marcos', 'marcos@yahoo.com', '83912344321','M','124345678','1243256711',0.50,0.10,
-                                NULL,NULL,'VED') -- ok
+                                NULL,NULL,'VED')
 INSERT INTO funcionario VALUES ('Leandro', 'leandro007@yahoo.com', '83912312561','M','1242134568','1436256089',NULL,NULL,
-                                NULL,NULL,'C&L') -- ok
+                                NULL,NULL,'C&L')
 INSERT INTO funcionario VALUES ('Jefferson', 'Jeff@gmail.com', '8398890140','M','236890478','1436706711',0.60,0.30,
-                                NULL,NULL,'VED') -- OK
-INSERT INTO funcionario VALUES ('Tania Soares','tan_soares@yahoo.com','8493428977','M','112798345','55437809145',NULL,NULL,
-                                'Programador','Big Data','BIG') -- OK
+                                NULL,NULL,'VED')
+INSERT INTO funcionario VALUES ('Tania Soares','tan_soares@yahoo.com','8493428977','F','112798345','55437809145',NULL,NULL,
+                                'Programador','Big Data','BIG')
+
+--UPDATE Funcionario INSERT campo 'salario'
+UPDATE funcionario SET salario =3500.00  WHERE IDFuncionario = 3
+UPDATE funcionario SET salario =1500.00  WHERE IDFuncionario = 4
+UPDATE funcionario SET salario =2400.00  WHERE IDFuncionario = 6
+UPDATE funcionario SET salario =2300.00  WHERE IDFuncionario = 7
+UPDATE funcionario SET salario =3200.00  WHERE IDFuncionario = 9
+
+--UPDATE Funcionario ADD data_nasc FEITO!!!
+UPDATE funcionario SET data_nasc = '21-03-1983'  WHERE IDFuncionario = 3
+UPDATE funcionario SET data_nasc = '25-06-1993'  WHERE IDFuncionario = 4
+UPDATE funcionario SET data_nasc = '18-02-1998'  WHERE IDFuncionario = 6
+UPDATE funcionario SET data_nasc = '20-12-2000'  WHERE IDFuncionario = 9
+UPDATE funcionario SET data_nasc = '10-07-1975'  WHERE IDFuncionario = 7
 
 -- INSERINDO Funcionario_Endereco  (INSERIDO) * FUNCIONANDO!!!
 INSERT INTO endereco_funcionario VALUES (4,12)
@@ -330,20 +369,32 @@ SELECT * FROM dept_produto
 
 -- FINALMENTE O BANCO FOI ALIMENTADO!!!!
 
--- FAZER CONSULTA DE UM CLIENTE COM TODOS OS SEUS DADOS REGISTRADOS, SEM ENDEREÇO  "Clientes Fisicos"
-SELECT c.nome, c.email, c.telefone, cf.rg, cf.sexo, cf.cpf FROM cliente c
-INNER JOIN cliente_fisico cf on c.ID_PF = cf.IDCliente_fisico
+-- Fazendo as consultas no banco total 10 (usar minimo 2 tabelas)
+SELECT * FROM cliente_fisico
 
--- FAZER A CONSULTA DE TODOS OS DADOS INCLUINDO ENDEREÇO (FUNIONANDO) "Clientes Fisicos"
+-- 1° Pesquisar Cliente Fisico, exibindo todos os dados incluindo o endereço (OK)
+-- Usar um WHERE para pesquisar pelo "cpf" da pessoa ( Dentro do programa posso entrar com cpf ou cnpj)
 SELECT c.nome, c.email, c.telefone, cf.rg, cf.sexo, cf.cpf, e.estado, e.cidade ,e.bairro FROM cliente c
 INNER JOIN cliente_fisico cf on c.ID_PF = cf.IDCliente_fisico INNER JOIN endereco e ON c.ID_Endereco = e.IDEnderco
+WHERE cf.cpf ='12345678912'
+
+-- 2° Pesquisar Funcionario, exibindo todos os dados incluindo o endereço
+SELECT f.nome, f.cpf, f.email, f.sexo, e.estado, e.cidade, e.rua, e.tipo, d.nome AS departamento
+FROM funcionario f INNER JOIN endereco_funcionario ef ON F.IDFuncionario = ef.ID_Funcionario
+INNER JOIN endereco e ON E.IDEnderco = ef.ID_Endereco_FC INNER JOIN departamento d
+ON d.IDDepartamento = f.ID_Departamento
 
 -- FAZER CONSULTA COM A RELAÇAO FORNECEDOR E PRODUTO
 SELECT p.nome AS produto, p.valor, p.descricao, f.nome AS fornecedor, f.cnpj
 FROM produto p INNER JOIN  produto_fornecedor pf ON p.IDProduto = pf.ID_Produto
 INNER JOIN fornecedor f on pf.ID_Fornecedor = f.IDFornecedor
 
--- FAZER UMA CONSULTA COM OS FUNCIONARIOS E SEUS ENDEREÇOS
-SELECT f.nome, f.cpf, f.email, f.sexo, e.estado, e.cidade, e.rua, e.tipo
-FROM funcionario f INNER JOIN endereco_funcionario ef ON F.IDFuncionario = ef.ID_Funcionario
-INNER JOIN endereco e ON E.IDEnderco = ef.ID_Endereco_FC
+-- Ver o gasto com salarios bases de todos os funcionarios
+SELECT SUM(f.salario) AS soma_dos_salarios,  FROM funcionario f
+
+-- Tenho que dá uma olhada nos meu codigos fontes sobre consultas!!!
+
+
+
+
+
