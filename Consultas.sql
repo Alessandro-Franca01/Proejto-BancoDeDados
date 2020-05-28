@@ -31,4 +31,14 @@ INNER JOIN fornecedor f on pf.ID_Fornecedor = f.IDFornecedor
 -- Ver o gasto com salarios bases de todos os funcionarios
 SELECT SUM(f.salario) AS soma_dos_salarios,  FROM funcionario f
 
+-- Consultar todos os pedidos de um determinado produto: FUNCIONANDO (Falta testar com mais pedidos do mesmo produto)
+SELECT pe.IDPedido,  pe.tipo ,pe.estado, pe.valor, pe.data_pedido, pe.data_entrega,
+    pp.Quantidade, po.valor AS valor_prduto, po.nome FROM pedido pe INNER JOIN
+    produto_pedido pp ON pe.IDPedido = pp.ID_Pedido
+    INNER JOIN produto po ON po.IDProduto = pp.ID_Produto WHERE ID_Produto = 101
+
+SELECT * FROM produto_pedido
+SELECT * FROM produto
+SELECT * FROM pedido
+
 -- Tenho que dá uma olhada nos meu codigos fontes sobre consultas!!!
